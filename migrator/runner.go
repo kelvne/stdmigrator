@@ -23,13 +23,7 @@ func (r *Runner) init() (*Runner, error) {
 		return nil, err
 	}
 
-	db, err := openGorm(r.config.connectionString(), 1, 0, 1)
-	if err != nil {
-		return nil, err
-	}
-
 	r.rootDB = rootDB
-	r.db = db
 
 	return r, nil
 }
@@ -62,6 +56,13 @@ func (r *Runner) createDatabase() error {
 			return err
 		}
 	}
+
+	db, err := openGorm(r.config.connectionString(), 1, 0, 1)
+	if err != nil {
+		return err
+	}
+
+	r.db = db
 
 	return nil
 }
