@@ -67,6 +67,11 @@ func (r *Runner) createDatabase() error {
 	return nil
 }
 
+func (r *Runner) openConn() (err error) {
+	r.db, err = openGorm(r.config.connectionString(), 1, 0, 1)
+	return
+}
+
 func (r *Runner) Up() error {
 	if err := r.createDatabase(); err != nil {
 		return err
@@ -75,9 +80,15 @@ func (r *Runner) Up() error {
 }
 
 func (r *Runner) Down() error {
+	if err := r.openConn(); err != nil {
+		return err
+	}
 	return goose.Down(r.db.DB(), r.config.MigrationsPath)
 }
 
 func (r *Runner) Reset() error {
+	if err := r.openConn(); err != nil {
+		return err
+	}
 	return goose.Reset(r.db.DB(), r.config.MigrationsPath)
 }
